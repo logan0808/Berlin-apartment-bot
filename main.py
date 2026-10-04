@@ -44,6 +44,7 @@ import hashlib
 
 import requests
 import feedparser
+from degewo_source import parse_source
 from dotenv import load_dotenv
 
 
@@ -1321,7 +1322,7 @@ def process_feed(
 
     try:
 
-        feed = feedparser.parse(
+        feed = parse_source(
             feed_url
         )
 

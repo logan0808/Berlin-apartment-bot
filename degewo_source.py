@@ -68,5 +68,8 @@ def parse_source(url):
     from types import SimpleNamespace
     if "degewo.de/immosuche" in url:
         return SimpleNamespace(entries=fetch_degewo(url, max_pages=10), bozo=0)
+    if "gewobag.de/fuer-mietinteressentinnen/suche" in url:
+        from gewobag_source import fetch_gewobag
+        return SimpleNamespace(entries=fetch_gewobag(url, max_pages=6), bozo=0)
     import feedparser
     return feedparser.parse(url)

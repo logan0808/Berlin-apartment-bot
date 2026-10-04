@@ -1,0 +1,61 @@
+cat > test_feed.xml << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+
+    <title>Berlin Apartment Test Feed</title>
+    <link>https://example.com</link>
+    <description>Test apartment listings</description>
+
+    <item>
+      <title>3 Zimmer Wohnung in Berlin Mitte</title>
+      <link>https://example.com/apartment-1</link>
+      <guid>apartment-1</guid>
+      <description>Beautiful 3 room apartment in Berlin Mitte. 75 sqm. 1.450 EUR warm.</description>
+    </item>
+
+    <item>
+      <title>WG Zimmer in Berlin</title>
+      <link>https://example.com/apartment-2</link>
+      <guid>apartment-2</guid>
+      <description>Furnished room in a shared apartment. 550 EUR.</description>
+    </item>
+
+    <item>
+      <title>2-Zimmer Kreuzberg &amp; Balkon</title>
+      <link>https://example.com/apartment-3</link>
+      <guid>apartment-3</guid>
+      <description>Bright 2-Zimmer apartment in Kreuzberg, 58 sqm, balcony. 1.100 EUR warm.</description>
+    </item>
+
+    <item>
+      <title>Zwischenmiete Neukölln, 3 Monate</title>
+      <link>https://example.com/apartment-4</link>
+      <guid>apartment-4</guid>
+      <description>2 room apartment in Neukölln. 65 sqm. 1.000 EUR warm. Zwischenmiete for 3 months.</description>
+    </item>
+
+    <item>
+      <title>Newgate Apartments Friedrichshain</title>
+      <link>https://example.com/apartment-5</link>
+      <guid>apartment-5</guid>
+      <description>Modern 2 room flat in Friedrichshain, 62 sqm, 1.300 EUR warm. Unbefristet.</description>
+    </item>
+
+    <item>
+      <title>3 Zimmer Penthouse Mitte</title>
+      <link>https://example.com/apartment-6</link>
+      <guid>apartment-6</guid>
+      <description>Luxury penthouse in Mitte, 110 sqm, 2.500 EUR warm.</description>
+    </item>
+
+    <item>
+      <title>2 Zimmer Wohnung in Neukölln</title>
+      <link>https://example.com/apartment-7</link>
+      <guid>apartment-7</guid>
+      <description>Nice 2 room apartment in Neukölln, 60 sqm, 1.200 EUR warm.</description>
+    </item>
+
+  </channel>
+</rss>
+EOF

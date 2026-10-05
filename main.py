@@ -44,7 +44,6 @@ import hashlib
 
 import requests
 import feedparser
-from degewo_source import parse_source
 from dotenv import load_dotenv
 
 
@@ -798,42 +797,60 @@ def get_listing_id(entry):
 def telegram_api(
     method,
     data=None,
-    params=None
+    params=None,
 ):
-
     url = (
         f"https://api.telegram.org/"
         f"bot{BOT_TOKEN}/{method}"
     )
 
-    try:
-
-        response = requests.post(
-            url,
-            data=data or {},
-            params=params or {},
-            timeout=10
-        )
-
-        if not response.ok:
-
-            log.error(
-                "Telegram API error: %s",
-                response.text
+    for attempt in range(3):
+        try:
+            response = requests.post(
+                url,
+                data=data or {},
+                params=params or {},
+                timeout=10,
             )
 
+            if response.status_code == 429:
+                try:
+                    retry_after = response.json().get(
+                        "parameters", {}
+                    ).get("retry_after", 5)
+                except ValueError:
+                    retry_after = 5
+
+                log.warning(
+                    "Telegram rate limit reached. "
+                    "Retrying in %s seconds.",
+                    retry_after,
+                )
+
+                time.sleep(retry_after)
+                continue
+
+            if not response.ok:
+                log.error(
+                    "Telegram API error: %s",
+                    response.text,
+                )
+                return None
+
+            return response.json()
+
+        except requests.RequestException as error:
+            log.error(
+                "Telegram request failed: %s",
+                error,
+            )
             return None
 
-        return response.json()
-
-    except requests.RequestException as error:
-
-        log.error(
-            "Telegram request failed: %s",
-            error
-        )
-
-        return None
+    log.error(
+        "Telegram API failed after %s attempts.",
+        3,
+    )
+    return None
 
 
 def send_simple_message(text):
@@ -916,9 +933,9 @@ def send_telegram_alert(
     )
 
     wbs_text = (
-        "Yes"
+        "🔖 WBS required"
         if wbs_required
-        else "No / not detected"
+        else "✅ No WBS required"
     )
 
     message = (
@@ -942,6 +959,9 @@ def send_telegram_alert(
             "disable_web_page_preview": False,
         }
     )
+
+    if result is not None:
+        time.sleep(3)
 
     return result is not None
 
@@ -1314,40 +1334,43 @@ def process_feed(
     feed_url,
     baseline=False
 ):
-
     log.info(
         "Checking feed: %s",
         feed_url
     )
 
     try:
+        if "degewo.de/immosuche" in feed_url:
+            from degewo_source import fetch_degewo
+            entries = fetch_degewo(feed_url, max_pages=10, delay=2)
+            feed = None
 
-        feed = parse_source(
-            feed_url
-        )
+        elif "gewobag.de/" in feed_url:
+            from gewobag_source import fetch_gewobag
+            entries = fetch_gewobag(feed_url, max_pages=6, delay=2)
+            feed = None
+
+        else:
+            feed = feedparser.parse(feed_url)
+            entries = feed.entries
 
     except Exception as error:
-
         log.error(
             "Could not parse feed %s: %s",
             feed_url,
             error
         )
-
         return 0, 0
 
-    entries = feed.entries
-
     if (
-        getattr(feed, "bozo", 0)
+        feed is not None
+        and getattr(feed, "bozo", 0)
         and not entries
     ):
-
         log.warning(
             "Feed returned no entries: %s",
             feed_url
         )
-
         return 0, 0
 
     log.info(

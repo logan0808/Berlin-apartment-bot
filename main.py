@@ -1350,6 +1350,11 @@ def process_feed(
             entries = fetch_gewobag(feed_url, max_pages=6, delay=2)
             feed = None
 
+        elif "gesobau.de/mieten/wohnungssuche" in feed_url:
+            from gesobau_source import fetch_gesobau
+            entries = fetch_gesobau(feed_url)
+            feed = None
+
         else:
             feed = feedparser.parse(feed_url)
             entries = feed.entries

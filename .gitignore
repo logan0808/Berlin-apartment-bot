@@ -6,3 +6,15 @@ __pycache__/
 .ipynb_checkpoints/
 .DS_Store
 test_feed.xml.save
+
+# Local secrets and backups
+.env.*
+!.env.example
+*.bak
+*.backup
+
+# Scraped test data
+sul.html
+sul.json
+listings.db
+seen_listings.json

@@ -1355,6 +1355,21 @@ def process_feed(
             entries = fetch_gesobau(feed_url)
             feed = None
 
+        elif "wbm.de/wohnungen-berlin/angebote" in feed_url:
+            from wbm_source import fetch_wbm
+            entries = fetch_wbm(feed_url)
+            feed = None
+
+        elif "berlinovo.de/de/wohnungen/suche" in feed_url:
+            from berlinovo_source import fetch_berlinovo
+            entries = fetch_berlinovo(feed_url)
+            feed = None
+
+        elif "stadtundland.de/wohnungssuche" in feed_url:
+            from stadtundland_source import fetch_stadtundland
+            entries = fetch_stadtundland()
+            feed = None
+
         else:
             feed = feedparser.parse(feed_url)
             entries = feed.entries
